@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SANN404 Tools</title>
     <style>
-        /* --- CORE STYLES --- */
+        /* --- CORE STYLES (ASLI - TIDAK DIUBAH) --- */
         :root {
             --bg: #f0f0f0;
             --black: #000;
@@ -37,9 +37,11 @@
             max-width: 480px;
             padding: 20px;
             margin-top: 20px;
+            position: relative;
+            z-index: 10;
         }
 
-        /* --- HEADER --- */
+        /* --- HEADER & CUSTOM LOGO --- */
         .brand {
             display: flex;
             align-items: center;
@@ -48,13 +50,33 @@
             border-bottom: 4px solid var(--black);
             padding-bottom: 15px;
         }
+        
+        /* Update: Logo Box bisa diklik */
         .logo-box {
             background: var(--black);
             color: var(--white);
-            padding: 5px 12px;
+            width: 45px;
+            height: 45px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
             font-weight: 900;
             font-size: 1.2rem;
+            cursor: pointer;
+            overflow: hidden;
+            border: 2px solid var(--black);
+            transition: 0.2s;
         }
+        .logo-box:hover {
+            transform: scale(1.1);
+            border-color: var(--accent);
+        }
+        .logo-box img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
         .title {
             font-weight: 900;
             font-size: 1.4rem;
@@ -84,7 +106,7 @@
 
         /* --- INPUTS --- */
         label { display: block; font-weight: bold; margin-bottom: 8px; text-transform: uppercase; font-size: 0.9rem; }
-        input {
+        input[type="text"], input[type="number"] {
             width: 100%;
             padding: 12px;
             border: 3px solid var(--black);
@@ -159,10 +181,10 @@
             border: 2px dashed var(--black);
             padding: 10px;
             margin-bottom: 15px;
-            white-space: pre-wrap; /* Agar enter di bio terbaca */
+            white-space: pre-wrap; 
         }
 
-        /* --- DETAIL TABLE (For Extra Data) --- */
+        /* --- DETAIL TABLE --- */
         .detail-table {
             width: 100%;
             border-collapse: collapse;
@@ -209,13 +231,98 @@
             border-top: 2px dashed var(--black); padding-top: 15px;
         }
         .loader { display: none; text-align: center; margin-top: 10px; font-weight: bold; }
+
+        /* --- NEW: DISCLAIMER MODAL STYLE --- */
+        .disclaimer-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.85);
+            z-index: 9999;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        .disclaimer-box {
+            background: var(--white);
+            border: 5px solid var(--accent);
+            box-shadow: 10px 10px 0 var(--white);
+            max-width: 400px;
+            padding: 25px;
+            text-align: left;
+        }
+        .disclaimer-title {
+            background: var(--black);
+            color: var(--accent);
+            display: inline-block;
+            padding: 5px 10px;
+            font-weight: 900;
+            margin-bottom: 15px;
+            font-size: 1.2rem;
+        }
+        .disclaimer-text { font-size: 0.8rem; line-height: 1.4; margin-bottom: 20px; }
+        .btn-agree {
+            background: var(--accent);
+            color: var(--black);
+            font-weight: 900;
+            border: 3px solid var(--black);
+            padding: 10px 20px;
+            cursor: pointer;
+            width: 100%;
+        }
+        .btn-agree:hover { background: var(--black); color: var(--white); }
+
+        /* --- NEW: DOCUMENTATION STYLE --- */
+        .docs-section {
+            margin-top: 20px;
+            border: 2px solid var(--black);
+            background: #e8e8e8;
+        }
+        details { padding: 10px; }
+        summary {
+            font-weight: 900;
+            cursor: pointer;
+            list-style: none; /* Hilangkan panah default di beberapa browser */
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        summary::after { content: '+'; font-weight: 900; font-size: 1.2rem; }
+        details[open] summary::after { content: '-'; }
+        
+        .doc-content {
+            margin-top: 10px;
+            font-size: 0.75rem;
+            border-top: 1px dashed var(--black);
+            padding-top: 10px;
+        }
+        .doc-content ul { padding-left: 20px; margin-bottom: 10px; }
     </style>
 </head>
 <body>
 
+    <div class="disclaimer-overlay" id="disclaimer">
+        <div class="disclaimer-box">
+            <div class="disclaimer-title">⚠ SYSTEM WARNING</div>
+            <div class="disclaimer-text">
+                <p><strong>Selamat datang di SANN404 FORUM.</strong></p>
+                <br>
+                <ul>
+                    <li>Alat ini digunakan untuk tujuan Edukasi & OSINT (Open Source Intelligence).</li>
+                    <li>Kami tidak menyimpan data apapun yang Anda cari.</li>
+                    <li>Gunakan dengan bijak. Penyalahgunaan informasi di luar tanggung jawab developer.</li>
+                    <li>Pastikan koneksi internet stabil saat request data.</li>
+                </ul>
+            </div>
+            <button class="btn-agree" onclick="closeDisclaimer()">ACCESS GRANTED [ENTER]</button>
+        </div>
+    </div>
+
     <div class="card">
         <div class="brand">
-            <div class="logo-box">S</div>
+            <label for="logo-upload" class="logo-box" id="logo-display" title="Klik untuk ganti logo">S</label>
+            <input type="file" id="logo-upload" accept="image/*" style="display:none" onchange="updateLogo(this)">
+            
             <div class="title">SANN404 FORUM</div>
         </div>
 
@@ -250,13 +357,52 @@
             <pre id="json-output" style="display:none; white-space: pre-wrap; font-size:0.7rem; color:red;"></pre>
         </div>
 
+        <div class="docs-section">
+            <details>
+                <summary>DOCUMENTATION & HELP</summary>
+                <div class="doc-content">
+                    <p><strong>Cara Penggunaan:</strong></p>
+                    <ul>
+                        <li><strong>TikTok/Instagram:</strong> Masukkan username tanpa '@'. Klik Start Search untuk melihat detail profil tersembunyi.</li>
+                        <li><strong>Pinterest:</strong> Masukkan kata kunci (Query) dan tentukan jumlah limit gambar yang ingin diambil.</li>
+                    </ul>
+                    <p><strong>Customization:</strong></p>
+                    <ul>
+                        <li>Klik kotak logo "S" di pojok kiri atas untuk mengganti logo forum dengan foto profil/logo tim Anda sendiri.</li>
+                    </ul>
+                    <p style="margin-top:5px; font-style:italic; font-size:0.65rem;">API provided by Public Endpoints. Status: Beta.</p>
+                </div>
+            </details>
+        </div>
+
         <div class="footer">
             DEVELOPED BY SANN404 FORUM<br>
-            ALL RIGHTS RESERVED 2024
+            ALL RIGHTS RESERVED 2026
         </div>
     </div>
 
     <script>
+        // --- SCRIPT BARU: DISCLAIMER & LOGO ---
+        function closeDisclaimer() {
+            document.getElementById('disclaimer').style.display = 'none';
+        }
+
+        function updateLogo(input) {
+            if (input.files && input.files[0]) {
+                var reader = new FileReader();
+                reader.onload = function(e) {
+                    var logoBox = document.getElementById('logo-display');
+                    logoBox.innerHTML = ''; // Hapus huruf S
+                    var img = document.createElement('img');
+                    img.src = e.target.result;
+                    logoBox.appendChild(img);
+                    logoBox.style.border = "2px solid var(--accent)";
+                }
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        // --- SCRIPT LAMA (ORIGINAL - JANGAN DIUBAH) ---
         let mode = 'tiktok';
 
         function setMode(m) {
@@ -388,11 +534,9 @@
                     html += `<div class="detail-header">DETAILED INFO</div>`;
                     html += `<table class="detail-table"><tbody>`;
                     
-                    // --- UPDATE DISINI: FILTER KEY API ---
                     const ignoredKeys = ['creator', 'status', 'code', 'msg', 'message', 'error', 'status_code'];
 
                     for (const [key, value] of Object.entries(d)) {
-                        // JIKA KEY ADA DI DAFTAR IGNORE, LEWATI (JANGAN TAMPILKAN)
                         if (ignoredKeys.includes(key.toLowerCase())) continue;
 
                         let displayValue = value;
