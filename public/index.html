@@ -3,299 +3,297 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SANN404 Tools | Developer Edition</title>
+    <title>SANN404 Tools</title>
     <style>
         /* --- CORE STYLES --- */
         :root {
-            --bg-color: #f4f4f5;
-            --primary: #000;
-            --accent: #FFD700; /* Kuning */
-            --paper: #fff;
-            --grid-line: #e4e4e7;
+            --bg: #f0f0f0;
+            --black: #000;
+            --accent: #FFD700; /* Kuning SANN404 */
+            --white: #fff;
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Courier New', Courier, monospace; }
 
         body {
-            background-color: var(--bg-color);
+            background-color: var(--bg);
+            /* Grid Background */
             background-image: 
-                linear-gradient(to right, var(--grid-line) 1px, transparent 1px),
-                linear-gradient(to bottom, var(--grid-line) 1px, transparent 1px);
-            background-size: 25px 25px;
+                linear-gradient(to right, #ccc 1px, transparent 1px),
+                linear-gradient(to bottom, #ccc 1px, transparent 1px);
+            background-size: 20px 20px;
             padding: 20px;
+            min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: flex-start;
-            min-height: 100vh;
         }
 
-        /* --- MAIN CARD --- */
-        .container {
+        .card {
+            background: var(--white);
+            border: 4px solid var(--black);
+            box-shadow: 8px 8px 0px 0px var(--black);
             width: 100%;
-            max-width: 500px;
-            background: var(--paper);
-            border: 4px solid var(--primary);
-            box-shadow: 10px 10px 0px 0px var(--primary);
-            padding: 2rem;
-            margin-top: 2rem;
-            position: relative;
+            max-width: 480px;
+            padding: 20px;
+            margin-top: 20px;
         }
 
         /* --- HEADER --- */
-        .header {
-            border-bottom: 4px solid var(--primary);
-            padding-bottom: 15px;
-            margin-bottom: 20px;
+        .brand {
             display: flex;
             align-items: center;
-            gap: 15px;
+            gap: 10px;
+            margin-bottom: 25px;
+            border-bottom: 4px solid var(--black);
+            padding-bottom: 15px;
         }
-
-        .badge {
-            background: var(--primary);
-            color: var(--paper);
-            padding: 5px 10px;
+        .logo-box {
+            background: var(--black);
+            color: var(--white);
+            padding: 5px 12px;
             font-weight: 900;
             font-size: 1.2rem;
         }
-
-        h1 {
-            font-size: 1.4rem;
+        .title {
             font-weight: 900;
+            font-size: 1.4rem;
             text-transform: uppercase;
-            background: linear-gradient(to top, var(--accent) 40%, transparent 40%);
+            background: linear-gradient(to top, var(--accent) 50%, transparent 50%);
         }
 
-        /* --- NAVIGATION --- */
-        .nav-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr 1fr;
-            gap: 10px;
-            margin-bottom: 25px;
-        }
-
-        .nav-btn {
-            padding: 10px 5px;
-            border: 3px solid var(--primary);
-            background: var(--paper);
+        /* --- TABS --- */
+        .tabs { display: flex; gap: 8px; margin-bottom: 20px; }
+        .tab {
+            flex: 1;
+            padding: 10px;
+            border: 3px solid var(--black);
+            background: var(--white);
             font-weight: bold;
             cursor: pointer;
-            text-transform: uppercase;
-            font-size: 0.8rem;
-            transition: 0.2s;
             text-align: center;
+            font-size: 0.85rem;
+            transition: 0.1s;
         }
-
-        .nav-btn:hover { transform: translate(-2px, -2px); box-shadow: 4px 4px 0 var(--primary); }
-        .nav-btn.active {
-            background: var(--primary);
-            color: var(--paper);
+        .tab.active {
+            background: var(--black);
+            color: var(--white);
             box-shadow: 4px 4px 0 var(--accent);
             transform: translate(-2px, -2px);
         }
 
-        /* --- FORMS --- */
-        .input-group { margin-bottom: 20px; }
-        label { display: block; font-weight: bold; margin-bottom: 8px; font-size: 0.9rem; }
-        
+        /* --- INPUTS --- */
+        label { display: block; font-weight: bold; margin-bottom: 8px; text-transform: uppercase; font-size: 0.9rem; }
         input {
             width: 100%;
-            padding: 15px;
-            border: 3px solid var(--primary);
-            background: #fafafa;
+            padding: 12px;
+            border: 3px solid var(--black);
             font-size: 1rem;
             outline: none;
+            background: #fafafa;
+            margin-bottom: 15px;
         }
-        input:focus { background: #fff; box-shadow: 4px 4px 0 var(--accent); }
+        input:focus { background: #fff; box-shadow: 4px 4px 0 #a855f7; }
 
-        .btn-action {
+        .btn-start {
             width: 100%;
             padding: 15px;
-            background: var(--primary);
-            color: var(--paper);
+            background: var(--black);
+            color: var(--white);
             font-weight: 900;
             font-size: 1.1rem;
-            border: 3px solid var(--primary);
+            border: none;
+            border: 3px solid var(--black); /* Fix border width */
             cursor: pointer;
-            text-transform: uppercase;
             transition: 0.2s;
         }
-        .btn-action:hover {
-            background: var(--paper);
-            color: var(--primary);
-            box-shadow: 6px 6px 0 var(--primary);
+        .btn-start:hover {
+            background: var(--white);
+            color: var(--black);
+            box-shadow: 5px 5px 0 var(--black);
             transform: translate(-2px, -2px);
         }
-        .btn-action:disabled { opacity: 0.6; cursor: not-allowed; }
 
         /* --- OUTPUT AREA --- */
-        .output-box {
+        #result-box {
             margin-top: 25px;
-            border: 3px solid var(--primary);
-            background: #f8f8f8;
+            border: 3px solid var(--black);
             padding: 15px;
             display: none;
+            background: #f9f9f9;
         }
-        .output-header { font-weight: bold; border-bottom: 2px dashed var(--primary); margin-bottom: 10px; padding-bottom: 5px; }
-        pre { white-space: pre-wrap; word-wrap: break-word; font-size: 0.75rem; color: #333; max-height: 300px; overflow-y: auto; }
+        
+        .raw-json {
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            font-size: 0.75rem;
+            max-height: 300px;
+            overflow-y: auto;
+        }
 
-        /* --- DOCS & FOOTER --- */
-        .accordion {
-            margin-top: 30px;
-            border-top: 4px solid var(--primary);
+        /* --- PINTEREST GRID --- */
+        .pin-gallery {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
         }
-        .acc-btn {
+        .pin-img {
             width: 100%;
-            text-align: left;
-            background: none;
-            border: none;
-            padding: 15px 0;
-            font-weight: bold;
-            cursor: pointer;
-            display: flex;
-            justify-content: space-between;
+            height: auto;
+            border: 2px solid var(--black);
+            box-shadow: 3px 3px 0 var(--black);
+            display: block;
         }
-        .acc-content {
-            display: none;
-            padding-bottom: 15px;
-            font-size: 0.8rem;
-            line-height: 1.4;
-        }
-        .code-snippet { background: #e0e0e0; padding: 2px 5px; font-family: monospace; }
 
+        /* --- FOOTER --- */
         .footer {
-            margin-top: 20px;
+            margin-top: 30px;
             text-align: center;
             font-size: 0.7rem;
-            color: #666;
             font-weight: bold;
+            border-top: 2px dashed var(--black);
+            padding-top: 15px;
         }
 
         .loader { display: none; text-align: center; margin-top: 10px; font-weight: bold; }
-
     </style>
 </head>
 <body>
 
-    <div class="container">
-        <div class="header">
-            <div class="badge">S</div>
-            <h1>SANN404 FORUM</h1>
+    <div class="card">
+        <div class="brand">
+            <div class="logo-box">S</div>
+            <div class="title">SANN404 FORUM</div>
         </div>
 
-        <div class="nav-grid">
-            <button class="nav-btn active" onclick="switchMode('tiktok')">TikTok</button>
-            <button class="nav-btn" onclick="switchMode('instagram')">Instagram</button>
-            <button class="nav-btn" onclick="switchMode('pinterest')">Pinterest</button>
+        <div class="tabs">
+            <button class="tab active" onclick="setMode('tiktok')">TikTok</button>
+            <button class="tab" onclick="setMode('instagram')">Instagram</button>
+            <button class="tab" onclick="setMode('pinterest')">Pinterest</button>
         </div>
 
-        <div class="input-group">
-            <label id="lbl-input">TIKTOK USERNAME</label>
-            <input type="text" id="inp-main" placeholder="ex: jungkook">
+        <div>
+            <label id="input-label">TIKTOK USERNAME</label>
+            <input type="text" id="main-input" placeholder="Enter username...">
         </div>
 
-        <div class="input-group" id="grp-limit" style="display: none;">
-            <label>LIMIT HASIL</label>
-            <input type="number" id="inp-limit" value="5" min="1" max="20">
+        <div id="pinterest-opt" style="display:none;">
+            <label>JUMLAH FOTO (Limit)</label>
+            <input type="number" id="limit-input" value="6" min="1" max="10">
         </div>
 
-        <button class="btn-action" onclick="executeSearch()" id="btn-exec">START SEARCH</button>
-        <div class="loader" id="loader">INITIALIZING REQUEST...</div>
+        <button class="btn-start" onclick="processData()">START SEARCH</button>
+        <div class="loader" id="loader">SEARCHING DATABASE...</div>
 
-        <div class="output-box" id="output-area">
-            <div class="output-header">RESPONSE DATA (JSON)</div>
-            <pre id="json-result"></pre>
-        </div>
-
-        <div class="accordion">
-            <button class="acc-btn" onclick="toggleDocs()">
-                <span>[+] API DOCUMENTATION & CREDIT</span>
-            </button>
-            <div class="acc-content" id="docs-content">
-                <p><strong>DEVELOPER:</strong> SANN404 FORUM</p>
-                <p><strong>VERSION:</strong> 2.0.1 (Stable)</p>
-                <br>
-                <p><strong>ENDPOINTS:</strong></p>
-                <ul>
-                    <li>- GET <span class="code-snippet">/api/tiktok?user={username}</span></li>
-                    <li>- GET <span class="code-snippet">/api/instagram?user={username}</span></li>
-                    <li>- GET <span class="code-snippet">/api/pinterest?query={q}&limit={n}</span></li>
-                </ul>
-                <br>
-                <p>This tool is intended for educational purposes only. Unauthorized usage is prohibited.</p>
+        <div id="result-box">
+            <div style="border-bottom: 2px dashed black; margin-bottom: 10px; padding-bottom:5px; font-weight:bold;">
+                RESULT OUTPUT
             </div>
+            <pre id="json-output" class="raw-json"></pre>
+            <div id="gallery-output" class="pin-gallery"></div>
         </div>
-        
+
         <div class="footer">
-            © 2024 SANN404 FORUM. ALL RIGHTS RESERVED.<br>
-            POWERED BY NODE.JS & VERCEL
+            DEVELOPED BY SANN404 FORUM<br>
+            ALL RIGHTS RESERVED 2024
         </div>
     </div>
 
     <script>
-        let currentMode = 'tiktok';
+        let mode = 'tiktok';
 
-        function switchMode(mode) {
-            currentMode = mode;
-            // UI Update
-            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+        function setMode(m) {
+            mode = m;
+            document.querySelectorAll('.tab').forEach(b => b.classList.remove('active'));
             event.target.classList.add('active');
-
-            // Reset Fields
-            const input = document.getElementById('inp-main');
-            const limitGroup = document.getElementById('grp-limit');
-            const output = document.getElementById('output-area');
             
-            output.style.display = 'none';
-            document.getElementById('json-result').innerText = '';
+            // UI Reset
+            document.getElementById('result-box').style.display = 'none';
+            document.getElementById('pinterest-opt').style.display = 'none';
+            const label = document.getElementById('input-label');
+            const inp = document.getElementById('main-input');
 
             if(mode === 'tiktok') {
-                document.getElementById('lbl-input').innerText = 'TIKTOK USERNAME';
-                input.placeholder = 'ex: jungkook';
-                limitGroup.style.display = 'none';
+                label.innerText = 'TIKTOK USERNAME';
+                inp.placeholder = 'e.g. sann404';
             } else if(mode === 'instagram') {
-                document.getElementById('lbl-input').innerText = 'INSTAGRAM USERNAME';
-                input.placeholder = 'ex: sann404_official';
-                limitGroup.style.display = 'none';
+                label.innerText = 'INSTAGRAM USERNAME';
+                inp.placeholder = 'e.g. sann404_official';
             } else if(mode === 'pinterest') {
-                document.getElementById('lbl-input').innerText = 'SEARCH QUERY';
-                input.placeholder = 'ex: Cyberpunk City';
-                limitGroup.style.display = 'block';
+                label.innerText = 'PINTEREST QUERY';
+                inp.placeholder = 'e.g. Dark Aesthetic';
+                document.getElementById('pinterest-opt').style.display = 'block';
             }
         }
 
-        function toggleDocs() {
-            const content = document.getElementById('docs-content');
-            content.style.display = content.style.display === 'block' ? 'none' : 'block';
-        }
-
-        async function executeSearch() {
-            const inputVal = document.getElementById('inp-main').value;
-            const limitVal = document.getElementById('inp-limit').value;
+        async function processData() {
+            const inputVal = document.getElementById('main-input').value.trim();
+            const limitVal = document.getElementById('limit-input').value;
             const loader = document.getElementById('loader');
-            const outputArea = document.getElementById('output-area');
-            const pre = document.getElementById('json-result');
+            const resultBox = document.getElementById('result-box');
+            const jsonOut = document.getElementById('json-output');
+            const galleryOut = document.getElementById('gallery-output');
 
-            if(!inputVal) { alert('Input cannot be empty / Input tidak boleh kosong'); return; }
+            if(!inputVal) { alert("Isi form dulu bang!"); return; }
 
             loader.style.display = 'block';
-            outputArea.style.display = 'none';
-            
-            // Menggunakan relative path agar otomatis mengarah ke backend Vercel yang sama
-            let endpoint = '';
-            if(currentMode === 'tiktok') endpoint = `/api/tiktok?user=${inputVal}`;
-            if(currentMode === 'instagram') endpoint = `/api/instagram?user=${inputVal}`;
-            if(currentMode === 'pinterest') endpoint = `/api/pinterest?query=${inputVal}&limit=${limitVal}`;
+            resultBox.style.display = 'none';
+            jsonOut.innerText = '';
+            galleryOut.innerHTML = ''; // Bersihkan gambar lama
+
+            let url = '';
+            if(mode === 'tiktok') url = `/api/tiktok?user=${inputVal}`;
+            if(mode === 'instagram') url = `/api/instagram?user=${inputVal}`;
+            if(mode === 'pinterest') url = `/api/pinterest?query=${inputVal}&limit=${limitVal}`;
 
             try {
-                const req = await fetch(endpoint);
+                const req = await fetch(url);
                 const res = await req.json();
 
-                pre.innerText = JSON.stringify(res, null, 2);
-                outputArea.style.display = 'block';
+                resultBox.style.display = 'block';
+
+                // LOGIKA KHUSUS PINTEREST (Tampilkan Gambar)
+                if(mode === 'pinterest' && res.data) {
+                    jsonOut.style.display = 'none'; // Sembunyikan teks JSON
+                    galleryOut.style.display = 'grid'; // Tampilkan Grid
+                    
+                    // Cek format data api (biasanya array string url atau array object)
+                    res.data.forEach(item => {
+                        // Jika item adalah string URL langsung
+                        let imgUrl = typeof item === 'string' ? item : item.url; 
+                        
+                        // Fallback jika struktur object berbeda (misal item.images.orig.url dll)
+                        if(!imgUrl && item.images) imgUrl = item.images_url; 
+
+                        if(imgUrl) {
+                            const img = document.createElement('img');
+                            img.src = imgUrl;
+                            img.className = 'pin-img';
+                            galleryOut.appendChild(img);
+                        }
+                    });
+
+                    if(galleryOut.children.length === 0) {
+                        galleryOut.innerHTML = '<p>Tidak ada gambar ditemukan atau format API berubah.</p>';
+                        jsonOut.style.display = 'block';
+                        jsonOut.innerText = JSON.stringify(res, null, 2);
+                    }
+
+                } else {
+                    // LOGIKA TIKTOK & IG (Tampilkan JSON Data)
+                    galleryOut.style.display = 'none';
+                    jsonOut.style.display = 'block';
+                    
+                    if(res.data === null) {
+                        jsonOut.innerText = "Error: Data User Tidak Ditemukan (Null).\nPastikan Username benar.";
+                    } else {
+                        jsonOut.innerText = JSON.stringify(res, null, 2);
+                    }
+                }
+
             } catch (err) {
-                pre.innerText = "SYSTEM ERROR:\n" + err.message + "\n\nCheck Backend Logs.";
-                outputArea.style.display = 'block';
+                resultBox.style.display = 'block';
+                jsonOut.innerText = "SYSTEM ERROR:\n" + err.message;
             } finally {
                 loader.style.display = 'none';
             }
