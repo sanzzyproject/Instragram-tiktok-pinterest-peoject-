@@ -17,7 +17,6 @@
 
         body {
             background-color: var(--bg);
-            /* Grid Background */
             background-image: 
                 linear-gradient(to right, #ccc 1px, transparent 1px),
                 linear-gradient(to bottom, #ccc 1px, transparent 1px);
@@ -41,7 +40,7 @@
             z-index: 10;
         }
 
-        /* --- HEADER & CUSTOM LOGO --- */
+        /* --- HEADER & LOGO --- */
         .brand {
             display: flex;
             align-items: center;
@@ -51,7 +50,7 @@
             padding-bottom: 15px;
         }
         
-        /* Update: Logo Box bisa diklik */
+        /* Update: Logo Box Static (Manual Change) */
         .logo-box {
             background: var(--black);
             color: var(--white);
@@ -60,21 +59,16 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            font-weight: 900;
-            font-size: 1.2rem;
-            cursor: pointer;
-            overflow: hidden;
             border: 2px solid var(--black);
-            transition: 0.2s;
+            overflow: hidden; 
         }
-        .logo-box:hover {
-            transform: scale(1.1);
-            border-color: var(--accent);
-        }
+        
+        /* Style agar gambar memenuhi kotak */
         .logo-box img {
             width: 100%;
             height: 100%;
             object-fit: cover;
+            display: block;
         }
 
         .title {
@@ -232,7 +226,7 @@
         }
         .loader { display: none; text-align: center; margin-top: 10px; font-weight: bold; }
 
-        /* --- NEW: DISCLAIMER MODAL STYLE --- */
+        /* --- DISCLAIMER MODAL STYLE --- */
         .disclaimer-overlay {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
@@ -272,7 +266,7 @@
         }
         .btn-agree:hover { background: var(--black); color: var(--white); }
 
-        /* --- NEW: DOCUMENTATION STYLE --- */
+        /* --- DOCUMENTATION STYLE --- */
         .docs-section {
             margin-top: 20px;
             border: 2px solid var(--black);
@@ -282,7 +276,7 @@
         summary {
             font-weight: 900;
             cursor: pointer;
-            list-style: none; /* Hilangkan panah default di beberapa browser */
+            list-style: none;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -320,8 +314,9 @@
 
     <div class="card">
         <div class="brand">
-            <label for="logo-upload" class="logo-box" id="logo-display" title="Klik untuk ganti logo">S</label>
-            <input type="file" id="logo-upload" accept="image/*" style="display:none" onchange="updateLogo(this)">
+            <div class="logo-box">
+                <img src="https://i.pinimg.com/736x/ea/1f/64/ea1f64668a0af149a3277db9e9e54824.jpg" alt="Logo">
+            </div>
             
             <div class="title">SANN404 FORUM</div>
         </div>
@@ -366,9 +361,9 @@
                         <li><strong>TikTok/Instagram:</strong> Masukkan username tanpa '@'. Klik Start Search untuk melihat detail profil tersembunyi.</li>
                         <li><strong>Pinterest:</strong> Masukkan kata kunci (Query) dan tentukan jumlah limit gambar yang ingin diambil.</li>
                     </ul>
-                    <p><strong>Customization:</strong></p>
+                    <p><strong>Cara Ganti Logo Forum:</strong></p>
                     <ul>
-                        <li>Klik kotak logo "S" di pojok kiri atas untuk mengganti logo forum dengan foto profil/logo tim Anda sendiri.</li>
+                        <li>Logo di pojok kiri atas bersifat statis. Untuk menggantinya, buka file HTML ini, cari tag <code>&lt;img src="..."&gt;</code> di dalam class <code>logo-box</code>, dan ganti URL-nya dengan gambar pilihan Anda.</li>
                     </ul>
                     <p style="margin-top:5px; font-style:italic; font-size:0.65rem;">API provided by Public Endpoints. Status: Beta.</p>
                 </div>
@@ -382,27 +377,12 @@
     </div>
 
     <script>
-        // --- SCRIPT BARU: DISCLAIMER & LOGO ---
+        // --- SCRIPT DISCLAIMER ---
         function closeDisclaimer() {
             document.getElementById('disclaimer').style.display = 'none';
         }
 
-        function updateLogo(input) {
-            if (input.files && input.files[0]) {
-                var reader = new FileReader();
-                reader.onload = function(e) {
-                    var logoBox = document.getElementById('logo-display');
-                    logoBox.innerHTML = ''; // Hapus huruf S
-                    var img = document.createElement('img');
-                    img.src = e.target.result;
-                    logoBox.appendChild(img);
-                    logoBox.style.border = "2px solid var(--accent)";
-                }
-                reader.readAsDataURL(input.files[0]);
-            }
-        }
-
-        // --- SCRIPT LAMA (ORIGINAL - JANGAN DIUBAH) ---
+        // --- CORE SCRIPT (TIDAK DIUBAH) ---
         let mode = 'tiktok';
 
         function setMode(m) {
@@ -457,7 +437,6 @@
 
                 resultBox.style.display = 'block';
 
-                // --- LOGIKA PINTEREST (Gallery) ---
                 if(mode === 'pinterest') {
                     if(res.data && res.data.length > 0) {
                         profileArea.style.display = 'none';
@@ -479,7 +458,6 @@
                         throw new Error("Gambar tidak ditemukan.");
                     }
                 } 
-                // --- LOGIKA TIKTOK & INSTAGRAM (FULL DATA) ---
                 else {
                     galleryOut.style.display = 'none';
                     
@@ -491,7 +469,6 @@
 
                     profileArea.style.display = 'block';
 
-                    // 1. CARI DATA PENTING
                     let avatar = d.avatarThumb || d.avatarMedium || d.profile_pic_url || d.avatar || d.hd_profile_pic_url_info?.url || 'https://via.placeholder.com/100';
                     let nickname = d.nickname || d.full_name || d.fullname || inputVal;
                     let username = d.uniqueId || d.username || d.short_name || inputVal;
@@ -502,7 +479,6 @@
                     let likes = d.heartCount || d.heart || d.likes || d.videoCount || d.media_count || 0;
                     let likeLabel = (mode === 'instagram') ? 'POSTS/MEDIA' : 'LIKES/HEARTS';
 
-                    // 2. RENDER HEADER
                     let html = `
                         <div class="profile-header">
                             <img src="${avatar}" class="profile-pic" onerror="this.src='https://via.placeholder.com/100'">
@@ -530,7 +506,6 @@
                         <div class="bio-box">${bio}</div>
                     `;
 
-                    // 3. RENDER TABEL (Filter 'creator', 'status', dll)
                     html += `<div class="detail-header">DETAILED INFO</div>`;
                     html += `<table class="detail-table"><tbody>`;
                     
