@@ -337,7 +337,6 @@
                 else {
                     galleryOut.style.display = 'none';
                     
-                    // Cek apakah data ada di res.data, res.result, atau res itu sendiri
                     let d = res.data || res.result || res;
                     
                     if(!d || Object.keys(d).length === 0) {
@@ -346,24 +345,18 @@
 
                     profileArea.style.display = 'block';
 
-                    // 1. CARI DATA PENTING (DENGAN ALTERNATIF KUNCI)
-                    // Foto
+                    // 1. CARI DATA PENTING
                     let avatar = d.avatarThumb || d.avatarMedium || d.profile_pic_url || d.avatar || d.hd_profile_pic_url_info?.url || 'https://via.placeholder.com/100';
-                    
-                    // Nama & Username
                     let nickname = d.nickname || d.full_name || d.fullname || inputVal;
                     let username = d.uniqueId || d.username || d.short_name || inputVal;
-                    
-                    // Bio
                     let bio = d.signature || d.biography || d.bio || d.desc || "No bio available.";
 
-                    // Stats (Cek berbagai kemungkinan nama key)
                     let followers = d.followerCount || d.followers || d.edge_followed_by?.count || d.subscribers || d.fans || 0;
                     let following = d.followingCount || d.following || d.edge_follow?.count || 0;
                     let likes = d.heartCount || d.heart || d.likes || d.videoCount || d.media_count || 0;
                     let likeLabel = (mode === 'instagram') ? 'POSTS/MEDIA' : 'LIKES/HEARTS';
 
-                    // 2. RENDER BAGIAN ATAS (Header & Stats)
+                    // 2. RENDER HEADER
                     let html = `
                         <div class="profile-header">
                             <img src="${avatar}" class="profile-pic" onerror="this.src='https://via.placeholder.com/100'">
@@ -391,23 +384,25 @@
                         <div class="bio-box">${bio}</div>
                     `;
 
-                    // 3. RENDER SEMUA SISA DATA (Tabel Detail)
-                    // Agar tidak ada data yang "dikurangi", kita loop semua key di object
+                    // 3. RENDER TABEL (Filter 'creator', 'status', dll)
                     html += `<div class="detail-header">DETAILED INFO</div>`;
                     html += `<table class="detail-table"><tbody>`;
                     
+                    // --- UPDATE DISINI: FILTER KEY API ---
+                    const ignoredKeys = ['creator', 'status', 'code', 'msg', 'message', 'error', 'status_code'];
+
                     for (const [key, value] of Object.entries(d)) {
-                        // Skip jika value adalah object/array yang terlalu panjang, kita ubah jadi string
+                        // JIKA KEY ADA DI DAFTAR IGNORE, LEWATI (JANGAN TAMPILKAN)
+                        if (ignoredKeys.includes(key.toLowerCase())) continue;
+
                         let displayValue = value;
                         
                         if (typeof value === 'object' && value !== null) {
-                            // Jika object, coba stringify tapi jangan terlalu panjang
                             displayValue = JSON.stringify(value).substring(0, 50) + (JSON.stringify(value).length > 50 ? '...' : '');
                         } else if (typeof value === 'boolean') {
                             displayValue = value ? 'True' : 'False';
                         }
                         
-                        // Filter agar gambar base64 panjang tidak merusak tampilan
                         if(String(displayValue).startsWith('data:image')) displayValue = "[Base64 Image Data]";
 
                         html += `
