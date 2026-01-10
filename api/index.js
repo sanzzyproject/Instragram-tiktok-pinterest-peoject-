@@ -4,59 +4,52 @@ const axios = require('axios');
 
 const app = express();
 
-// Mengizinkan akses dari mana saja (CORS Enabled)
 app.use(cors());
 app.use(express.json());
 
-// Helper function untuk fetch data
+// Fungsi Fetch dengan Penyamaran Browser (User-Agent)
 const fetchData = async (url, res) => {
     try {
-        const response = await axios.get(url);
+        const response = await axios.get(url, {
+            headers: {
+                // Header ini PENTING agar tidak dibaca sebagai bot/spam
+                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
+                'Accept': 'application/json'
+            }
+        });
         res.json(response.data);
     } catch (error) {
         res.status(500).json({
             status: "error",
-            message: "Gagal mengambil data dari server pusat.",
-            error_detail: error.message
+            message: "Gagal terhubung ke server data.",
+            debug: error.message
         });
     }
 };
 
-// Endpoint 1: TikTok Stalker
 app.get('/api/tiktok', (req, res) => {
     const user = req.query.user;
-    if (!user) return res.status(400).json({ error: "Parameter 'user' wajib diisi" });
-    
+    if (!user) return res.status(400).json({ error: "Username kosong" });
     fetchData(`https://api.lipz.site/api/discovery/st-tiktok?user=${user}`, res);
 });
 
-// Endpoint 2: Instagram Stalker
 app.get('/api/instagram', (req, res) => {
     const user = req.query.user;
-    if (!user) return res.status(400).json({ error: "Parameter 'user' wajib diisi" });
-
+    if (!user) return res.status(400).json({ error: "Username kosong" });
     fetchData(`https://api.lipz.site/api/discovery/st-instagram?user=${user}`, res);
 });
 
-// Endpoint 3: Pinterest Search
 app.get('/api/pinterest', (req, res) => {
     const query = req.query.query;
-    const limit = req.query.limit || 5;
+    // Default limit agak banyak agar grid gambar terlihat bagus
+    const limit = req.query.limit || 6; 
     
-    if (!query) return res.status(400).json({ error: "Parameter 'query' wajib diisi" });
-
+    if (!query) return res.status(400).json({ error: "Query kosong" });
     fetchData(`https://api.lipz.site/api/discovery/pinterest?query=${query}&limit=${limit}`, res);
 });
 
-// Default route
 app.get('/', (req, res) => {
-    res.send('SANN404 Backend Server is Running.');
+    res.send('SANN404 SERVER RUNNING...');
 });
 
-// Export untuk Vercel Serverless
 module.exports = app;
-
-// Jalankan server lokal jika file dijalankan langsung
-if (require.main === module) {
-    app.listen(3000, () => console.log('Server berjalan di port 3000'));
-}
