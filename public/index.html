@@ -123,58 +123,65 @@
             background: #f9f9f9;
         }
 
-        /* --- STALKING PROFILE UI (NEW) --- */
-        .profile-container {
+        /* --- STALKING PROFILE UI --- */
+        .profile-header {
             text-align: center;
+            margin-bottom: 20px;
         }
         .profile-pic {
-            width: 120px;
-            height: 120px;
+            width: 100px;
+            height: 100px;
             border: 3px solid var(--black);
             border-radius: 50%;
             object-fit: cover;
-            margin-bottom: 15px;
-            box-shadow: 4px 4px 0 var(--accent);
+            background: #ddd;
+            margin-bottom: 10px;
         }
-        .user-name {
-            font-size: 1.2rem;
-            font-weight: 900;
-            margin-bottom: 5px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 5px;
-        }
-        .verified-badge {
-            color: #1DA1F2;
-            font-size: 1.1rem;
-        }
-        .user-handle {
-            font-size: 0.9rem;
-            color: #555;
-            font-weight: bold;
-            margin-bottom: 15px;
-        }
+        .user-info h2 { font-size: 1.1rem; font-weight: 900; }
+        .user-info p { font-size: 0.8rem; color: #555; font-weight: bold; margin-bottom: 5px; }
+        
         .stats-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 10px;
-            margin: 15px 0;
-            border-top: 2px dashed var(--black);
-            border-bottom: 2px dashed var(--black);
-            padding: 10px 0;
-        }
-        .stat-item h4 { font-size: 1.1rem; font-weight: 900; }
-        .stat-item span { font-size: 0.75rem; font-weight: bold; text-transform: uppercase; }
-        
-        .user-bio {
-            font-size: 0.85rem;
-            white-space: pre-wrap;
-            background: #eee;
-            padding: 10px;
+            gap: 5px;
+            text-align: center;
+            background: var(--white);
             border: 2px solid var(--black);
+            padding: 10px 0;
+            margin-bottom: 15px;
+        }
+        .stat-box h3 { font-size: 1rem; margin-bottom: 2px; }
+        .stat-box span { font-size: 0.65rem; font-weight: bold; color: #666; }
+
+        .bio-box {
+            font-size: 0.8rem;
+            background: #fff;
+            border: 2px dashed var(--black);
+            padding: 10px;
+            margin-bottom: 15px;
+            white-space: pre-wrap; /* Agar enter di bio terbaca */
+        }
+
+        /* --- DETAIL TABLE (For Extra Data) --- */
+        .detail-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+            font-size: 0.75rem;
+        }
+        .detail-table th, .detail-table td {
+            border: 1px solid var(--black);
+            padding: 6px;
             text-align: left;
-            margin-top: 15px;
+            word-break: break-all;
+        }
+        .detail-table th { background: var(--black); color: var(--white); width: 35%; }
+        .detail-header {
+            margin-top: 15px; 
+            font-weight: 900; 
+            text-transform: uppercase; 
+            border-bottom: 3px solid var(--accent); 
+            display: inline-block;
         }
 
         /* --- PINTEREST GRID --- */
@@ -183,50 +190,25 @@
             grid-template-columns: 1fr 1fr;
             gap: 15px;
         }
-        .pin-card {
-            display: flex;
-            flex-direction: column;
-        }
+        .pin-card { display: flex; flex-direction: column; }
         .pin-img {
-            width: 100%;
-            height: auto;
+            width: 100%; height: auto;
             border: 2px solid var(--black);
             box-shadow: 3px 3px 0 var(--black);
             display: block;
         }
         .btn-download {
-            margin-top: 8px;
-            background: var(--accent);
-            color: var(--black);
-            border: 2px solid var(--black);
-            font-size: 0.7rem;
-            font-weight: bold;
-            padding: 8px;
-            text-align: center;
-            text-decoration: none;
-            display: block;
-            cursor: pointer;
-            transition: 0.2s;
-        }
-        .btn-download:hover {
-            background: var(--black);
-            color: var(--white);
+            margin-top: 8px; background: var(--accent); color: var(--black);
+            border: 2px solid var(--black); font-size: 0.7rem; font-weight: bold;
+            padding: 8px; text-align: center; text-decoration: none; display: block;
         }
 
         /* --- FOOTER --- */
         .footer {
-            margin-top: 30px;
-            text-align: center;
-            font-size: 0.7rem;
-            font-weight: bold;
-            border-top: 2px dashed var(--black);
-            padding-top: 15px;
+            margin-top: 30px; text-align: center; font-size: 0.7rem; font-weight: bold;
+            border-top: 2px dashed var(--black); padding-top: 15px;
         }
-
         .loader { display: none; text-align: center; margin-top: 10px; font-weight: bold; }
-        
-        /* Fallback for error text */
-        .error-text { color: red; font-weight: bold; text-align: center; }
     </style>
 </head>
 <body>
@@ -261,11 +243,11 @@
                 RESULT OUTPUT
             </div>
             
-            <div id="profile-output" class="profile-container" style="display:none;"></div>
+            <div id="profile-area" style="display:none;"></div>
 
             <div id="gallery-output" class="pin-gallery" style="display:none;"></div>
             
-            <pre id="json-output" style="display:none; white-space: pre-wrap; font-size:0.7rem;"></pre>
+            <pre id="json-output" style="display:none; white-space: pre-wrap; font-size:0.7rem; color:red;"></pre>
         </div>
 
         <div class="footer">
@@ -282,7 +264,6 @@
             document.querySelectorAll('.tab').forEach(b => b.classList.remove('active'));
             event.target.classList.add('active');
             
-            // UI Reset
             document.getElementById('result-box').style.display = 'none';
             document.getElementById('pinterest-opt').style.display = 'none';
             const label = document.getElementById('input-label');
@@ -307,7 +288,7 @@
             const loader = document.getElementById('loader');
             const resultBox = document.getElementById('result-box');
             
-            const profileOut = document.getElementById('profile-output');
+            const profileArea = document.getElementById('profile-area');
             const galleryOut = document.getElementById('gallery-output');
             const jsonOut = document.getElementById('json-output');
 
@@ -315,12 +296,11 @@
 
             loader.style.display = 'block';
             resultBox.style.display = 'none';
-            profileOut.innerHTML = '';
+            profileArea.innerHTML = '';
             galleryOut.innerHTML = '';
-            jsonOut.innerText = '';
+            jsonOut.style.display = 'none';
 
             let url = '';
-            // URL API Backend (JANGAN DIUBAH)
             if(mode === 'tiktok') url = `/api/tiktok?user=${inputVal}`;
             if(mode === 'instagram') url = `/api/instagram?user=${inputVal}`;
             if(mode === 'pinterest') url = `/api/pinterest?query=${inputVal}&limit=${limitVal}`;
@@ -331,113 +311,128 @@
 
                 resultBox.style.display = 'block';
 
-                // --- LOGIKA PINTEREST (Gallery + Download) ---
-                if(mode === 'pinterest' && res.data) {
-                    profileOut.style.display = 'none';
-                    jsonOut.style.display = 'none';
-                    galleryOut.style.display = 'grid';
+                // --- LOGIKA PINTEREST (Gallery) ---
+                if(mode === 'pinterest') {
+                    if(res.data && res.data.length > 0) {
+                        profileArea.style.display = 'none';
+                        galleryOut.style.display = 'grid';
+                        
+                        res.data.forEach(item => {
+                            let imgUrl = typeof item === 'string' ? item : (item.url || item.images_url || item.image || item.images?.orig?.url);
+                            if(imgUrl) {
+                                const card = document.createElement('div');
+                                card.className = 'pin-card';
+                                card.innerHTML = `
+                                    <img src="${imgUrl}" class="pin-img">
+                                    <a href="${imgUrl}" target="_blank" class="btn-download">DOWNLOAD ⬇</a>
+                                `;
+                                galleryOut.appendChild(card);
+                            }
+                        });
+                    } else {
+                        throw new Error("Gambar tidak ditemukan.");
+                    }
+                } 
+                // --- LOGIKA TIKTOK & INSTAGRAM (FULL DATA) ---
+                else {
+                    galleryOut.style.display = 'none';
                     
-                    res.data.forEach(item => {
-                        // Handle berbagai format response gambar
-                        let imgUrl = typeof item === 'string' ? item : (item.url || item.images_url || (item.images ? item.images.orig.url : null));
-
-                        if(imgUrl) {
-                            const card = document.createElement('div');
-                            card.className = 'pin-card';
-
-                            const img = document.createElement('img');
-                            img.src = imgUrl;
-                            img.className = 'pin-img';
-
-                            // Tombol Download
-                            const btn = document.createElement('a');
-                            btn.href = imgUrl;
-                            btn.target = "_blank"; // Buka tab baru agar user bisa save
-                            btn.className = 'btn-download';
-                            btn.innerHTML = 'DOWNLOAD ⬇';
-                            // Note: Attribute 'download' sering diblokir CORS jika domain beda, jadi target _blank lebih aman.
-
-                            card.appendChild(img);
-                            card.appendChild(btn);
-                            galleryOut.appendChild(card);
-                        }
-                    });
+                    // Cek apakah data ada di res.data, res.result, atau res itu sendiri
+                    let d = res.data || res.result || res;
                     
-                    if(galleryOut.children.length === 0) {
-                        galleryOut.innerHTML = '<p class="error-text">Gambar tidak ditemukan.</p>';
+                    if(!d || Object.keys(d).length === 0) {
+                        throw new Error("Data User Tidak Ditemukan/Null.");
                     }
 
-                } 
-                // --- LOGIKA TIKTOK & INSTAGRAM (Profile Card) ---
-                else if ((mode === 'tiktok' || mode === 'instagram') && res.data) {
-                    galleryOut.style.display = 'none';
-                    jsonOut.style.display = 'none';
-                    profileOut.style.display = 'block';
+                    profileArea.style.display = 'block';
 
-                    const d = res.data; // Shortcut data
+                    // 1. CARI DATA PENTING (DENGAN ALTERNATIF KUNCI)
+                    // Foto
+                    let avatar = d.avatarThumb || d.avatarMedium || d.profile_pic_url || d.avatar || d.hd_profile_pic_url_info?.url || 'https://via.placeholder.com/100';
                     
-                    // Normalisasi Data (Karena field API beda-beda tiap service)
-                    let avatar = d.avatarThumb || d.profile_pic_url || d.avatar || 'https://via.placeholder.com/150';
-                    let nickname = d.nickname || d.full_name || d.username || 'User';
-                    let username = d.uniqueId || d.username || inputVal;
-                    let bio = d.signature || d.biography || d.bio || 'No bio available.';
-                    let isVerified = d.verified || d.is_verified || false;
+                    // Nama & Username
+                    let nickname = d.nickname || d.full_name || d.fullname || inputVal;
+                    let username = d.uniqueId || d.username || d.short_name || inputVal;
                     
-                    // Stats (Cek berbagai kemungkinan key response JSON)
-                    let followers = d.followerCount || d.edge_followed_by?.count || d.followers || '-';
-                    let following = d.followingCount || d.edge_follow?.count || d.following || '-';
-                    let likes = d.heartCount || d.heart || '-'; // Instagram mungkin tidak ada likes total profile
-                    let labelLike = mode === 'tiktok' ? 'LIKES' : 'POSTS'; 
-                    // Jika IG, biasanya count post ada di media_count
-                    if(mode === 'instagram') likes = d.media_count || d.edge_owner_to_timeline_media?.count || '-';
+                    // Bio
+                    let bio = d.signature || d.biography || d.bio || d.desc || "No bio available.";
 
-                    // Template HTML Profile
-                    profileOut.innerHTML = `
-                        <img src="${avatar}" class="profile-pic" alt="Profile">
-                        <div class="user-name">
-                            ${nickname} 
-                            ${isVerified ? '<span class="verified-badge">☑</span>' : ''}
+                    // Stats (Cek berbagai kemungkinan nama key)
+                    let followers = d.followerCount || d.followers || d.edge_followed_by?.count || d.subscribers || d.fans || 0;
+                    let following = d.followingCount || d.following || d.edge_follow?.count || 0;
+                    let likes = d.heartCount || d.heart || d.likes || d.videoCount || d.media_count || 0;
+                    let likeLabel = (mode === 'instagram') ? 'POSTS/MEDIA' : 'LIKES/HEARTS';
+
+                    // 2. RENDER BAGIAN ATAS (Header & Stats)
+                    let html = `
+                        <div class="profile-header">
+                            <img src="${avatar}" class="profile-pic" onerror="this.src='https://via.placeholder.com/100'">
+                            <div class="user-info">
+                                <h2>${nickname}</h2>
+                                <p>@${username}</p>
+                            </div>
                         </div>
-                        <div class="user-handle">@${username}</div>
 
                         <div class="stats-grid">
-                            <div class="stat-item">
-                                <h4>${formatNumber(following)}</h4>
+                            <div class="stat-box">
+                                <h3>${formatNum(following)}</h3>
                                 <span>FOLLOWING</span>
                             </div>
-                            <div class="stat-item">
-                                <h4>${formatNumber(followers)}</h4>
+                            <div class="stat-box">
+                                <h3>${formatNum(followers)}</h3>
                                 <span>FOLLOWERS</span>
                             </div>
-                            <div class="stat-item">
-                                <h4>${formatNumber(likes)}</h4>
-                                <span>${labelLike}</span>
+                            <div class="stat-box">
+                                <h3>${formatNum(likes)}</h3>
+                                <span>${likeLabel}</span>
                             </div>
                         </div>
 
-                        <div class="user-bio">${bio}</div>
+                        <div class="bio-box">${bio}</div>
                     `;
 
-                } else {
-                    // Jika format data tidak dikenali / error
-                    profileOut.style.display = 'none';
-                    galleryOut.style.display = 'none';
-                    jsonOut.style.display = 'block';
-                    jsonOut.innerText = res.message || JSON.stringify(res, null, 2);
+                    // 3. RENDER SEMUA SISA DATA (Tabel Detail)
+                    // Agar tidak ada data yang "dikurangi", kita loop semua key di object
+                    html += `<div class="detail-header">DETAILED INFO</div>`;
+                    html += `<table class="detail-table"><tbody>`;
+                    
+                    for (const [key, value] of Object.entries(d)) {
+                        // Skip jika value adalah object/array yang terlalu panjang, kita ubah jadi string
+                        let displayValue = value;
+                        
+                        if (typeof value === 'object' && value !== null) {
+                            // Jika object, coba stringify tapi jangan terlalu panjang
+                            displayValue = JSON.stringify(value).substring(0, 50) + (JSON.stringify(value).length > 50 ? '...' : '');
+                        } else if (typeof value === 'boolean') {
+                            displayValue = value ? 'True' : 'False';
+                        }
+                        
+                        // Filter agar gambar base64 panjang tidak merusak tampilan
+                        if(String(displayValue).startsWith('data:image')) displayValue = "[Base64 Image Data]";
+
+                        html += `
+                            <tr>
+                                <th>${key}</th>
+                                <td>${displayValue}</td>
+                            </tr>
+                        `;
+                    }
+                    html += `</tbody></table>`;
+
+                    profileArea.innerHTML = html;
                 }
 
             } catch (err) {
                 resultBox.style.display = 'block';
                 jsonOut.style.display = 'block';
-                jsonOut.innerText = "SYSTEM ERROR:\n" + err.message;
+                jsonOut.innerText = "ERROR / NOT FOUND:\n" + err.message;
             } finally {
                 loader.style.display = 'none';
             }
         }
 
-        // Helper untuk memformat angka (cth: 1000 jadi 1K)
-        function formatNumber(num) {
-            if(num === '-' || !num) return '-';
+        function formatNum(num) {
+            if(!num || num === 0) return '0';
             if(num >= 1000000) return (num/1000000).toFixed(1) + 'M';
             if(num >= 1000) return (num/1000).toFixed(1) + 'K';
             return num;
