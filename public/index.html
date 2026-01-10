@@ -103,7 +103,7 @@
             font-weight: 900;
             font-size: 1.1rem;
             border: none;
-            border: 3px solid var(--black); /* Fix border width */
+            border: 3px solid var(--black);
             cursor: pointer;
             transition: 0.2s;
         }
@@ -122,20 +122,70 @@
             display: none;
             background: #f9f9f9;
         }
+
+        /* --- STALKING PROFILE UI (NEW) --- */
+        .profile-container {
+            text-align: center;
+        }
+        .profile-pic {
+            width: 120px;
+            height: 120px;
+            border: 3px solid var(--black);
+            border-radius: 50%;
+            object-fit: cover;
+            margin-bottom: 15px;
+            box-shadow: 4px 4px 0 var(--accent);
+        }
+        .user-name {
+            font-size: 1.2rem;
+            font-weight: 900;
+            margin-bottom: 5px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 5px;
+        }
+        .verified-badge {
+            color: #1DA1F2;
+            font-size: 1.1rem;
+        }
+        .user-handle {
+            font-size: 0.9rem;
+            color: #555;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin: 15px 0;
+            border-top: 2px dashed var(--black);
+            border-bottom: 2px dashed var(--black);
+            padding: 10px 0;
+        }
+        .stat-item h4 { font-size: 1.1rem; font-weight: 900; }
+        .stat-item span { font-size: 0.75rem; font-weight: bold; text-transform: uppercase; }
         
-        .raw-json {
+        .user-bio {
+            font-size: 0.85rem;
             white-space: pre-wrap;
-            word-wrap: break-word;
-            font-size: 0.75rem;
-            max-height: 300px;
-            overflow-y: auto;
+            background: #eee;
+            padding: 10px;
+            border: 2px solid var(--black);
+            text-align: left;
+            margin-top: 15px;
         }
 
         /* --- PINTEREST GRID --- */
         .pin-gallery {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 10px;
+            gap: 15px;
+        }
+        .pin-card {
+            display: flex;
+            flex-direction: column;
         }
         .pin-img {
             width: 100%;
@@ -143,6 +193,24 @@
             border: 2px solid var(--black);
             box-shadow: 3px 3px 0 var(--black);
             display: block;
+        }
+        .btn-download {
+            margin-top: 8px;
+            background: var(--accent);
+            color: var(--black);
+            border: 2px solid var(--black);
+            font-size: 0.7rem;
+            font-weight: bold;
+            padding: 8px;
+            text-align: center;
+            text-decoration: none;
+            display: block;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .btn-download:hover {
+            background: var(--black);
+            color: var(--white);
         }
 
         /* --- FOOTER --- */
@@ -156,6 +224,9 @@
         }
 
         .loader { display: none; text-align: center; margin-top: 10px; font-weight: bold; }
+        
+        /* Fallback for error text */
+        .error-text { color: red; font-weight: bold; text-align: center; }
     </style>
 </head>
 <body>
@@ -174,7 +245,7 @@
 
         <div>
             <label id="input-label">TIKTOK USERNAME</label>
-            <input type="text" id="main-input" placeholder="Enter username...">
+            <input type="text" id="main-input" placeholder="e.g. yogarmdn.skom">
         </div>
 
         <div id="pinterest-opt" style="display:none;">
@@ -186,11 +257,15 @@
         <div class="loader" id="loader">SEARCHING DATABASE...</div>
 
         <div id="result-box">
-            <div style="border-bottom: 2px dashed black; margin-bottom: 10px; padding-bottom:5px; font-weight:bold;">
+            <div style="border-bottom: 2px dashed black; margin-bottom: 10px; padding-bottom:5px; font-weight:bold; text-align:center;">
                 RESULT OUTPUT
             </div>
-            <pre id="json-output" class="raw-json"></pre>
-            <div id="gallery-output" class="pin-gallery"></div>
+            
+            <div id="profile-output" class="profile-container" style="display:none;"></div>
+
+            <div id="gallery-output" class="pin-gallery" style="display:none;"></div>
+            
+            <pre id="json-output" style="display:none; white-space: pre-wrap; font-size:0.7rem;"></pre>
         </div>
 
         <div class="footer">
@@ -215,7 +290,7 @@
 
             if(mode === 'tiktok') {
                 label.innerText = 'TIKTOK USERNAME';
-                inp.placeholder = 'e.g. sann404';
+                inp.placeholder = 'e.g. yogarmdn.skom';
             } else if(mode === 'instagram') {
                 label.innerText = 'INSTAGRAM USERNAME';
                 inp.placeholder = 'e.g. sann404_official';
@@ -231,17 +306,21 @@
             const limitVal = document.getElementById('limit-input').value;
             const loader = document.getElementById('loader');
             const resultBox = document.getElementById('result-box');
-            const jsonOut = document.getElementById('json-output');
+            
+            const profileOut = document.getElementById('profile-output');
             const galleryOut = document.getElementById('gallery-output');
+            const jsonOut = document.getElementById('json-output');
 
             if(!inputVal) { alert("Isi form dulu bang!"); return; }
 
             loader.style.display = 'block';
             resultBox.style.display = 'none';
+            profileOut.innerHTML = '';
+            galleryOut.innerHTML = '';
             jsonOut.innerText = '';
-            galleryOut.innerHTML = ''; // Bersihkan gambar lama
 
             let url = '';
+            // URL API Backend (JANGAN DIUBAH)
             if(mode === 'tiktok') url = `/api/tiktok?user=${inputVal}`;
             if(mode === 'instagram') url = `/api/instagram?user=${inputVal}`;
             if(mode === 'pinterest') url = `/api/pinterest?query=${inputVal}&limit=${limitVal}`;
@@ -252,51 +331,116 @@
 
                 resultBox.style.display = 'block';
 
-                // LOGIKA KHUSUS PINTEREST (Tampilkan Gambar)
+                // --- LOGIKA PINTEREST (Gallery + Download) ---
                 if(mode === 'pinterest' && res.data) {
-                    jsonOut.style.display = 'none'; // Sembunyikan teks JSON
-                    galleryOut.style.display = 'grid'; // Tampilkan Grid
+                    profileOut.style.display = 'none';
+                    jsonOut.style.display = 'none';
+                    galleryOut.style.display = 'grid';
                     
-                    // Cek format data api (biasanya array string url atau array object)
                     res.data.forEach(item => {
-                        // Jika item adalah string URL langsung
-                        let imgUrl = typeof item === 'string' ? item : item.url; 
-                        
-                        // Fallback jika struktur object berbeda (misal item.images.orig.url dll)
-                        if(!imgUrl && item.images) imgUrl = item.images_url; 
+                        // Handle berbagai format response gambar
+                        let imgUrl = typeof item === 'string' ? item : (item.url || item.images_url || (item.images ? item.images.orig.url : null));
 
                         if(imgUrl) {
+                            const card = document.createElement('div');
+                            card.className = 'pin-card';
+
                             const img = document.createElement('img');
                             img.src = imgUrl;
                             img.className = 'pin-img';
-                            galleryOut.appendChild(img);
+
+                            // Tombol Download
+                            const btn = document.createElement('a');
+                            btn.href = imgUrl;
+                            btn.target = "_blank"; // Buka tab baru agar user bisa save
+                            btn.className = 'btn-download';
+                            btn.innerHTML = 'DOWNLOAD ⬇';
+                            // Note: Attribute 'download' sering diblokir CORS jika domain beda, jadi target _blank lebih aman.
+
+                            card.appendChild(img);
+                            card.appendChild(btn);
+                            galleryOut.appendChild(card);
                         }
                     });
-
+                    
                     if(galleryOut.children.length === 0) {
-                        galleryOut.innerHTML = '<p>Tidak ada gambar ditemukan atau format API berubah.</p>';
-                        jsonOut.style.display = 'block';
-                        jsonOut.innerText = JSON.stringify(res, null, 2);
+                        galleryOut.innerHTML = '<p class="error-text">Gambar tidak ditemukan.</p>';
                     }
+
+                } 
+                // --- LOGIKA TIKTOK & INSTAGRAM (Profile Card) ---
+                else if ((mode === 'tiktok' || mode === 'instagram') && res.data) {
+                    galleryOut.style.display = 'none';
+                    jsonOut.style.display = 'none';
+                    profileOut.style.display = 'block';
+
+                    const d = res.data; // Shortcut data
+                    
+                    // Normalisasi Data (Karena field API beda-beda tiap service)
+                    let avatar = d.avatarThumb || d.profile_pic_url || d.avatar || 'https://via.placeholder.com/150';
+                    let nickname = d.nickname || d.full_name || d.username || 'User';
+                    let username = d.uniqueId || d.username || inputVal;
+                    let bio = d.signature || d.biography || d.bio || 'No bio available.';
+                    let isVerified = d.verified || d.is_verified || false;
+                    
+                    // Stats (Cek berbagai kemungkinan key response JSON)
+                    let followers = d.followerCount || d.edge_followed_by?.count || d.followers || '-';
+                    let following = d.followingCount || d.edge_follow?.count || d.following || '-';
+                    let likes = d.heartCount || d.heart || '-'; // Instagram mungkin tidak ada likes total profile
+                    let labelLike = mode === 'tiktok' ? 'LIKES' : 'POSTS'; 
+                    // Jika IG, biasanya count post ada di media_count
+                    if(mode === 'instagram') likes = d.media_count || d.edge_owner_to_timeline_media?.count || '-';
+
+                    // Template HTML Profile
+                    profileOut.innerHTML = `
+                        <img src="${avatar}" class="profile-pic" alt="Profile">
+                        <div class="user-name">
+                            ${nickname} 
+                            ${isVerified ? '<span class="verified-badge">☑</span>' : ''}
+                        </div>
+                        <div class="user-handle">@${username}</div>
+
+                        <div class="stats-grid">
+                            <div class="stat-item">
+                                <h4>${formatNumber(following)}</h4>
+                                <span>FOLLOWING</span>
+                            </div>
+                            <div class="stat-item">
+                                <h4>${formatNumber(followers)}</h4>
+                                <span>FOLLOWERS</span>
+                            </div>
+                            <div class="stat-item">
+                                <h4>${formatNumber(likes)}</h4>
+                                <span>${labelLike}</span>
+                            </div>
+                        </div>
+
+                        <div class="user-bio">${bio}</div>
+                    `;
 
                 } else {
-                    // LOGIKA TIKTOK & IG (Tampilkan JSON Data)
+                    // Jika format data tidak dikenali / error
+                    profileOut.style.display = 'none';
                     galleryOut.style.display = 'none';
                     jsonOut.style.display = 'block';
-                    
-                    if(res.data === null) {
-                        jsonOut.innerText = "Error: Data User Tidak Ditemukan (Null).\nPastikan Username benar.";
-                    } else {
-                        jsonOut.innerText = JSON.stringify(res, null, 2);
-                    }
+                    jsonOut.innerText = res.message || JSON.stringify(res, null, 2);
                 }
 
             } catch (err) {
                 resultBox.style.display = 'block';
+                jsonOut.style.display = 'block';
                 jsonOut.innerText = "SYSTEM ERROR:\n" + err.message;
             } finally {
                 loader.style.display = 'none';
             }
+        }
+
+        // Helper untuk memformat angka (cth: 1000 jadi 1K)
+        function formatNumber(num) {
+            if(num === '-' || !num) return '-';
+            if(num >= 1000000) return (num/1000000).toFixed(1) + 'M';
+            if(num >= 1000) return (num/1000).toFixed(1) + 'K';
+            return num;
         }
     </script>
 </body>
