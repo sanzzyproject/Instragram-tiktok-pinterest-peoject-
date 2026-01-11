@@ -21,13 +21,112 @@
                 linear-gradient(to right, #ccc 1px, transparent 1px),
                 linear-gradient(to bottom, #ccc 1px, transparent 1px);
             background-size: 20px 20px;
-            padding: 20px;
+            /* Padding top ditambah agar konten tidak tertutup navbar fixed */
+            padding-top: 100px; 
+            padding-bottom: 20px;
+            padding-left: 20px;
+            padding-right: 20px;
             min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: flex-start;
         }
 
+        /* --- NEW: FIXED NAVBAR STYLE --- */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 80px;
+            background: var(--white);
+            border-bottom: 4px solid var(--black);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 20px;
+            z-index: 900; /* Di bawah Disclaimer, di atas konten */
+            box-shadow: 0 4px 0 rgba(0,0,0,0.1);
+        }
+
+        .nav-brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .menu-btn {
+            background: var(--black);
+            color: var(--white);
+            border: 2px solid var(--black);
+            font-size: 1.5rem;
+            font-weight: 900;
+            width: 45px;
+            height: 45px;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: 0.2s;
+        }
+        .menu-btn:hover {
+            background: var(--accent);
+            color: var(--black);
+        }
+
+        /* --- NEW: SIDEBAR STYLE --- */
+        .sidebar-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 998; /* Di bawah Disclaimer */
+            display: none;
+        }
+        .sidebar {
+            position: fixed;
+            top: 0; right: -100%; /* Sembunyi di kanan */
+            width: 85%;
+            max-width: 350px;
+            height: 100%;
+            background: var(--white);
+            border-left: 4px solid var(--black);
+            z-index: 999;
+            transition: 0.3s ease-in-out;
+            padding: 20px;
+            overflow-y: auto;
+            box-shadow: -10px 0 0 rgba(0,0,0,0.2);
+        }
+        .sidebar.active { right: 0; }
+        
+        .sidebar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 3px solid var(--black);
+            padding-bottom: 15px;
+            margin-bottom: 20px;
+        }
+        .sidebar-title { font-weight: 900; font-size: 1.2rem; background: var(--accent); padding: 2px 5px; }
+        .close-btn {
+            background: transparent; border: none; font-weight: 900; font-size: 1.5rem; cursor: pointer;
+        }
+        .sidebar-content h4 {
+            background: var(--black); color: var(--white); padding: 5px; margin-top: 15px; margin-bottom: 10px;
+        }
+        .sidebar-link {
+            display: block;
+            background: #eee;
+            border: 2px solid var(--black);
+            padding: 10px;
+            text-decoration: none;
+            color: var(--black);
+            font-weight: bold;
+            margin-bottom: 8px;
+            text-align: center;
+        }
+        .sidebar-link:hover { background: var(--accent); }
+
+        /* --- EXISTING CARD STYLES --- */
         .card {
             background: var(--white);
             border: 4px solid var(--black);
@@ -35,22 +134,11 @@
             width: 100%;
             max-width: 480px;
             padding: 20px;
-            margin-top: 20px;
             position: relative;
             z-index: 10;
         }
 
-        /* --- HEADER & LOGO --- */
-        .brand {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin-bottom: 25px;
-            border-bottom: 4px solid var(--black);
-            padding-bottom: 15px;
-        }
-        
-        /* Update: Logo Box Static (Manual Change) */
+        /* LOGO & TITLE (Dipindah ke Navbar, style disesuaikan dikit) */
         .logo-box {
             background: var(--black);
             color: var(--white);
@@ -62,8 +150,6 @@
             border: 2px solid var(--black);
             overflow: hidden; 
         }
-        
-        /* Style agar gambar memenuhi kotak */
         .logo-box img {
             width: 100%;
             height: 100%;
@@ -73,13 +159,14 @@
 
         .title {
             font-weight: 900;
-            font-size: 1.4rem;
+            font-size: 1.1rem; /* Sedikit diperkecil agar muat di navbar mobile */
             text-transform: uppercase;
             background: linear-gradient(to top, var(--accent) 50%, transparent 50%);
+            white-space: nowrap;
         }
 
         /* --- TABS --- */
-        .tabs { display: flex; gap: 8px; margin-bottom: 20px; }
+        .tabs { display: flex; gap: 8px; margin-bottom: 20px; margin-top: 10px; }
         .tab {
             flex: 1;
             padding: 10px;
@@ -266,31 +353,62 @@
         }
         .btn-agree:hover { background: var(--black); color: var(--white); }
 
-        /* --- DOCUMENTATION STYLE --- */
-        .docs-section {
-            margin-top: 20px;
+        /* --- TECH STACK SECTION STYLE --- */
+        .tech-section {
+            margin-top: 25px;
             border: 2px solid var(--black);
-            background: #e8e8e8;
+            background: var(--white);
+            padding: 0;
         }
-        details { padding: 10px; }
-        summary {
+        .tech-head-bar {
+            background: var(--black);
+            color: var(--white);
+            padding: 8px 10px;
             font-weight: 900;
-            cursor: pointer;
-            list-style: none;
+            font-size: 0.8rem;
+            text-transform: uppercase;
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
-        summary::after { content: '+'; font-weight: 900; font-size: 1.2rem; }
-        details[open] summary::after { content: '-'; }
-        
-        .doc-content {
-            margin-top: 10px;
-            font-size: 0.75rem;
-            border-top: 1px dashed var(--black);
+        .tech-body {
+            padding: 15px;
+        }
+        .tech-badges {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 15px;
+        }
+        .badge {
+            display: inline-flex;
+            border: 2px solid var(--black);
+            font-size: 0.65rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            box-shadow: 2px 2px 0 #ccc;
+        }
+        .badge-label {
+            background: var(--black);
+            color: var(--white);
+            padding: 4px 6px;
+        }
+        .badge-val {
+            background: var(--white);
+            color: var(--black);
+            padding: 4px 6px;
+        }
+        .badge.vercel .badge-val { background: var(--accent); }
+
+        .tech-desc {
+            font-size: 0.7rem;
+            line-height: 1.4;
+            color: #333;
+            border-top: 2px dashed #ccc;
             padding-top: 10px;
         }
-        .doc-content ul { padding-left: 20px; margin-bottom: 10px; }
+        .tech-desc strong { color: var(--black); }
+
     </style>
 </head>
 <body>
@@ -312,15 +430,56 @@
         </div>
     </div>
 
-    <div class="card">
-        <div class="brand">
+    <nav class="navbar">
+        <div class="nav-brand">
             <div class="logo-box">
                 <img src="https://cdn.odzre.my.id/inx.jpg" alt="Logo">
             </div>
-            
-            <div class="title">𝐒𝐓𝐀𝐋𝐊𝐈𝐍𝐆-𝐈𝐌𝐆 𝐒𝐄𝐀𝐑𝐂𝐇</div>
+            <div class="title">𝐒𝐓𝐀𝐋𝐊𝐈𝐍𝐆-𝐈𝐌𝐆 𝐒𝐄𝐀𝐑𝐂𝐇 </div></div>
         </div>
+        <button class="menu-btn" onclick="toggleSidebar()">⋮</button>
+    </nav>
 
+    <div class="sidebar-overlay" id="sidebar-overlay" onclick="toggleSidebar()"></div>
+    <div class="sidebar" id="sidebar-panel">
+        <div class="sidebar-header">
+            <span class="sidebar-title">SYSTEM MENU</span>
+            <button class="close-btn" onclick="toggleSidebar()">X</button>
+        </div>
+        
+        <div class="sidebar-content">
+            <h4>DOKUMENTASI LENGKAP</h4>
+            <div style="font-size: 0.8rem; line-height: 1.5; border: 1px dashed black; padding: 10px; background:#fafafa;">
+                <p><strong>Cara Penggunaan:</strong></p>
+                <ul style="padding-left: 20px;">
+                    <li><strong>TikTok/Instagram:</strong> Masukkan username tanpa '@'. Klik Start Search untuk melihat detail profil tersembunyi.</li>
+                    <li><strong>Pinterest:</strong> Masukkan kata kunci (Query) dan tentukan jumlah limit gambar.</li>
+                </ul>
+                <br>
+                <p><strong>Fitur OSINT:</strong></p>
+                <ul style="padding-left: 20px;">
+                    <li>Bypass private info (Public Only)</li>
+                    <li>High Resolution Profile Pic</li>
+                    <li>Download Image Direct</li>
+                </ul>
+            </div>
+
+            <h4>ADMIN / SUMBER</h4>
+            <a href="#" class="sidebar-link">📢 SANN404 OFFICIAL CHANNEL</a>
+            <a href="#" class="sidebar-link">👤 CONTACT ADMIN (TELEGRAM)</a>
+            <a href="#" class="sidebar-link">🔧 LAPOR BUG / ERROR</a>
+            
+            <h4>VERSION INFO</h4>
+            <div class="tech-badges">
+                <div class="badge">
+                    <span class="badge-label">VER</span>
+                    <span class="badge-val">2.0 UI</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
         <div class="tabs">
             <button class="tab active" onclick="setMode('tiktok')">TikTok</button>
             <button class="tab" onclick="setMode('instagram')">Instagram</button>
@@ -352,19 +511,43 @@
             <pre id="json-output" style="display:none; white-space: pre-wrap; font-size:0.7rem; color:red;"></pre>
         </div>
 
-        <div class="docs-section">
-            <details>
-                <summary>DOCUMENTATION & HELP</summary>
-                <div class="doc-content">
-                    <p><strong>Cara Penggunaan:</strong></p>
-                    <ul>
-                        <li><strong>TikTok/Instagram:</strong> Masukkan username tanpa '@'. Klik Start Search untuk melihat detail profil tersembunyi.</li>
-                        <li><strong>Pinterest:</strong> Masukkan kata kunci (Query) dan tentukan jumlah limit gambar yang ingin diambil.</li>
-                    </ul>
-                   
-            </details>
-        </div>
+        <div class="tech-section">
+            <div class="tech-head-bar">
+                <span>SYSTEM_INFO</span>
+                <span>v1.0</span>
+            </div>
+            <div class="tech-body">
+                <div class="tech-badges">
+                    <div class="badge">
+                        <span class="badge-label">CORE</span>
+                        <span class="badge-val">HTML5</span>
+                    </div>
+                    <div class="badge">
+                        <span class="badge-label">STYLE</span>
+                        <span class="badge-val">CSS3</span>
+                    </div>
+                    <div class="badge">
+                        <span class="badge-label">LOGIC</span>
+                        <span class="badge-val">VANILLA JS</span>
+                    </div>
+                    <div class="badge">
+                        <span class="badge-label">BACKEND</span>
+                        <span class="badge-val">NODE.JS</span>
+                    </div>
+                    <div class="badge vercel">
+                        <span class="badge-label">DEPLOY</span>
+                        <span class="badge-val">VERCEL</span>
+                    </div>
+                </div>
 
+                <div class="tech-desc">
+                    <p><strong>ABOUT THIS TOOL:</strong></p>
+                    <p>Aplikasi ini dibangun dengan pendekatan <em>Native Performance</em> menggunakan standar web modern tanpa framework frontend (No React/Vue) untuk kecepatan maksimal.</p>
+                    <br>
+                    <p>Backend ditenagai oleh <strong>Node.js</strong> untuk menangani API Request secara efisien, dan didistribusikan melalui infrastruktur <strong>Vercel Serverless</strong>.</p>
+                </div>
+            </div>
+        </div>
         <div class="footer">
             DEVELOPED BY SANN404 FORUM<br>
             ALL RIGHTS RESERVED 2026
@@ -372,12 +555,25 @@
     </div>
 
     <script>
-        // --- SCRIPT DISCLAIMER ---
+        // --- SCRIPT UI BARU (SIDEBAR & DISCLAIMER) ---
         function closeDisclaimer() {
             document.getElementById('disclaimer').style.display = 'none';
         }
 
-        // --- CORE SCRIPT (TIDAK DIUBAH) ---
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar-panel');
+            const overlay = document.getElementById('sidebar-overlay');
+            
+            if (sidebar.classList.contains('active')) {
+                sidebar.classList.remove('active');
+                overlay.style.display = 'none';
+            } else {
+                sidebar.classList.add('active');
+                overlay.style.display = 'block';
+            }
+        }
+
+        // --- CORE SCRIPT (ASLI - TIDAK DIUBAH SAMA SEKALI PADA LOGIKA API) ---
         let mode = 'tiktok';
 
         function setMode(m) {
